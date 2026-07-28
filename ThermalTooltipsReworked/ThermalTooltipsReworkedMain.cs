@@ -68,16 +68,6 @@ namespace ThermalTooltipsReworked {
 
 				if (mod.staticID == "PeterHan.ThermalTooltips"         || /*1983504552*/
 					mod.staticID == "MaterialSelectionProperties"      || /*2600818338*/
-					mod.staticID == "multiTemps"                       || /*3506650482*/
-					mod.staticID == "ahc.HighPrecisionTemperature"     || /*3022469420*/
-					mod.staticID == "ahc.TruthfulThermalConductivity"  || /*3022436400*/
-					mod.staticID == "DOLj.TemperaturE-05"              || /*2729922307*/
-					mod.staticID == "RP.Temperatur-0E5"                || /*3562130565*/
-					(mod.label.id == "1737903327" || mod.label.title == "DisplayAllTemps")                   || /*1737903327*/
-					(mod.label.id == "1878592057" || mod.label.title == "CustomTemperatureOverlay")          || /*1878592057*/
-					(mod.label.id == "3647713426" || mod.label.title == "High Precision Temperature FIXED")  || /*3647713426*/
-					(mod.label.id == "3636600859" || mod.label.title == "Controlled Overlay")                || /*3636600859*/
-					(mod.label.id == "2563149160" || mod.label.title == "HeatMap")                           || /*2563149160*/
 					false)
 				{
 					restartRequested = true;
