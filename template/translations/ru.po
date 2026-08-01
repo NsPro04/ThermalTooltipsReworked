@@ -10,12 +10,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#. ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.THERMALTOOLTIPS.THERMAL_MASS
-msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.THERMALTOOLTIPS.THERMAL_MASS"
+#. ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.THERMAL_MASS
+msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.THERMAL_MASS"
 msgid "Thermal Mass: {0}"
 msgstr "Тепловая масса: {0}"
 
-#. ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.THERMALTOOLTIPS.HEAT_ENERGY
-msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.THERMALTOOLTIPS.HEAT_ENERGY"
+#. ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.HEAT_ENERGY
+msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.HEAT_ENERGY"
 msgid "Heat Energy: {0}"
 msgstr "Тепловая энергия: {0}"
+
+#. ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.ADVANCED_PROPERTIES
+msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.ADVANCED_PROPERTIES"
+msgid "<b>Advanced Properties:</b>"
+msgstr "<b>Дополнительные свойства:</b>"

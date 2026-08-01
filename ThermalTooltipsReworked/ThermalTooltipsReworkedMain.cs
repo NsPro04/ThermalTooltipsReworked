@@ -344,13 +344,13 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMALTOOLTIPS.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.THERMALTOOLTIPS.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
 				}
 
 				{ // high temp transition
@@ -607,13 +607,13 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMALTOOLTIPS.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.THERMALTOOLTIPS.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
 				}
 
 				{ // high temp transition
@@ -758,13 +758,13 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMALTOOLTIPS.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.THERMALTOOLTIPS.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
 				}
 
 				{ // high temp transition
@@ -874,7 +874,7 @@ namespace ThermalTooltipsReworked {
 
 				{ // header
 					Descriptor header = default;
-					header.SetupDescriptor("<b>Advanced Stats:</b>", ELEMENTS.MATERIAL_MODIFIERS.TOOLTIP.EFFECTS_HEADER);
+					header.SetupDescriptor(TTRS.UI.ADVANCED_PROPERTIES, ELEMENTS.MATERIAL_MODIFIERS.TOOLTIP.EFFECTS_HEADER);
 
 					descriptors.Add(header);
 				}
@@ -977,7 +977,7 @@ namespace ThermalTooltipsReworked {
 						string tm_formatted = string.Format("{0} (kDTU)/{1}", tm_str, temperatureUnitSuffix);
 
 						row.SetupDescriptor(
-							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(TTRS.UI.THERMALTOOLTIPS.THERMAL_MASS, "").Trim().Replace(":", ""), tm_str),
+							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(TTRS.UI.THERMAL_MASS, "").Trim().Replace(":", ""), tm_str),
 							string.Format("{0}", tm_formatted)
 						);
 					}
@@ -1138,10 +1138,9 @@ namespace ThermalTooltipsReworked {
 namespace ThermalTooltipsReworked {
 	public static class ThermalTooltipsReworkedStrings {
 		public static class UI {
-			public static class THERMALTOOLTIPS {
-				public static LocString THERMAL_MASS = "Thermal Mass: {0}";
-				public static LocString HEAT_ENERGY = "Heat Energy: {0}";
-			}
+			public static LocString THERMAL_MASS = "Thermal Mass: {0}";
+			public static LocString HEAT_ENERGY = "Heat Energy: {0}";
+			public static LocString ADVANCED_PROPERTIES = "<b>Advanced Properties:</b>";
 		}
 	}
 }
