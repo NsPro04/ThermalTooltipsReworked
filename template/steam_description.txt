@@ -1,0 +1,33 @@
+This mod is simply a rework of the [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1983504552]original mod[/url].
+Although NOT A SINGLE LINE of code was taken from the original, and everything was developed from scratch, credit for the idea still goes to the original author - [url=https://steamcommunity.com/profiles/76561198025154321]@Stephen[/url]
+
+Originally, I made this mod just for myself, but it turned out pretty well, so I decided to publish it.
+
+[h2]List of changes compared to the original mod:[/h2]
+[list]
+[*]For all objects (plants, entities (debris, items, creatures, geysers, etc.), buildings from ruins, and others), the material is now displayed in the title[/*]
+[*]The actual mass of the object is displayed (farm tiles, airflow tiles, etc., are processed correctly)[/*]
+[*]Temperature is displayed without abbreviations[/*]
+[*]The actual thermal conductivity of the object is displayed (including for insulated and rubber tiles)[/*]
+[*]The Specific Heat Capacity of the material is displayed[/*]
+[*]As a result of the correct mass, both thermal mass and heat energy are calculated correctly[/*]
+[*]Heat Energy, like temperature, is displayed without abbreviations[/*]
+[*]Phase-change temperatures are displayed in two units simultaneously (in the selected units and in kelvins)[/*]
+[*]The temperature of the contents of the bubbles is displayed[/*]
+[*]The content temperature of the bubbles is displayed[/*]
+[*]In addition, the material selection section has been formatted[/*]
+[/list]
+(I may have forgotten something)
+
+[h2]Known issues:[/h2]
+[list]
+[*]Grouping from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1960947963]Better Info Cards[/url] is not supported[/*]
+[*]Cannot be configured[/*]
+[/list]
+
+[h2]Source code:[/h2]
+[url=https://github.com/NsPro04/ThermalTooltipsReworked]GitHub[/url]
+[spoiler]
+I had never worked with C# or ONI modding before this, so the mod is currently a giant wall of code that also contains multiple duplications, lol.
+I will definitely get around to refactoring it a bit later.
+[/spoiler]
