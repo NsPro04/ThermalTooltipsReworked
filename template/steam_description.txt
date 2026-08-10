@@ -16,18 +16,15 @@ Originally, I made this mod just for myself, but it turned out pretty well, so I
 [*]The temperature of the contents of the bubbles is displayed[/*]
 [*]The content temperature of the bubbles is displayed[/*]
 [*]In addition, the material selection section has been formatted[/*]
-[/list]
-(I may have forgotten something)
+[/list](I may have forgotten something)
 
 [h2]Known issues:[/h2]
 [list]
 [*]Grouping from [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1960947963]Better Info Cards[/url] is not supported[/*]
 [*]Cannot be configured[/*]
 [/list]
-
 [h2]Source code:[/h2]
 [url=https://github.com/NsPro04/ThermalTooltipsReworked]GitHub[/url]
-[spoiler]
-I had never worked with C# or ONI modding before this, so the mod is currently a giant wall of code that also contains multiple duplications, lol.
+[i]I had never worked with C# or ONI modding before this, so the mod is currently a giant wall of code that also contains multiple duplications, lol.
 I will definitely get around to refactoring it a bit later.
-[/spoiler]
+[/i]
