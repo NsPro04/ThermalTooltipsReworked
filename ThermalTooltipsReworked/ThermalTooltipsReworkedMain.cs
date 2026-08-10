@@ -1343,3 +1343,4 @@ namespace ThermalTooltipsReworked {
 
 // TODO: Display buried objects?
 // TODO: Display pipes and rails content? Buildings?
+// TODO: It seems like the buildings are melting, ignoring the +3°/-3° for the phase change
