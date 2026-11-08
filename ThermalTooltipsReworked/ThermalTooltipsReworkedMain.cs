@@ -1093,6 +1093,15 @@ namespace ThermalTooltipsReworked {
 		);
 	}
 
+	internal static class DecimalExtensions {
+		public static string ToStringIC(this decimal value, string format) {
+			return value.ToString(format, CultureInfo.InvariantCulture);
+		}
+		public static string ToStringIC(this decimal value) {
+			return value.ToString(CultureInfo.InvariantCulture);
+		}
+	}
+
 	internal static class HoverTextDrawerExtensions {
 		private static readonly Type HoverTextDrawerType = typeof(HoverTextDrawer);
 
