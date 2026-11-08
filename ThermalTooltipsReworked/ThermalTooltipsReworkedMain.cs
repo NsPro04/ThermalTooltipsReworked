@@ -66,8 +66,11 @@ namespace ThermalTooltipsReworked {
 			foreach (KMod.Mod mod in modManager.mods) {
 				if (!mod.IsActive()) continue;
 
-				if (mod.staticID == "PeterHan.ThermalTooltips"         || /*1983504552*/
-					mod.staticID == "MaterialSelectionProperties"      || /*2600818338*/
+				if (mod.staticID == "PeterHan.ThermalTooltips"    || /*1983504552*/
+					mod.staticID == "MaterialSelectionProperties" || /*2600818338*/
+					mod.staticID == "BetterInfoCardsPlus"         || /*3817699615*/
+					mod.staticID == "CanisMinor.ThermalInfoCards" || /*3797325396*/
+					mod.staticID == "AlwaysShowItemInfo"          || /*3778431283*/
 					false)
 				{
 					restartRequested = true;
