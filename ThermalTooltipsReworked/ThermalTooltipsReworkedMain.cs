@@ -1341,12 +1341,6 @@ namespace ThermalTooltipsReworked {
 
 			public static float Get() => (width.Value);
 		}
-
-		public static class ConverterManager {
-			public const string title = "Title";
-			public const string germs = "Germs";
-			public const string temp  = "Temp";
-		}
 	}
 }
 
