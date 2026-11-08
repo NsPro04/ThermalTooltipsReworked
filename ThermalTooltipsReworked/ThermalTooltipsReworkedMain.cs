@@ -183,7 +183,6 @@ namespace ThermalTooltipsReworked {
 
 			for (int i = 0; i < FilteredHoverObjects.Count; ++i) { // buildings
 				KSelectable hoverObject = FilteredHoverObjects[i];
-				//BICCompatibility.ExportSelectToolData.curSelectable = hoverObject; // BIC
 
 				bool selected = SelectTool.Instance.selected == hoverObject;
 
@@ -201,7 +200,6 @@ namespace ThermalTooltipsReworked {
 						title = StringFormatter.Replace(StringFormatter.Replace(UI.TOOLS.GENERIC.BUILDING_HOVER_NAME_FMT, "{Name}", title), "{Element}", element.nameUpperCase);
 					}
 
-					//BICCompatibility.ExportSelectToolData.GetSelectInfo_Patch.ExportGO(BICCompatibility.ConverterManager.title); // BIC
 					hoverTextDrawer.DrawText(title, TitleStyle);
 				}
 
@@ -238,7 +236,6 @@ namespace ThermalTooltipsReworked {
 								{
 									TextStyleSetting style = (IsStatusItemWarning(status_item) ? __instance.HoverTextStyleSettings[1] : BodyStyle);
 
-									//BICCompatibility.ExportSelectToolData.GetSelectInfo_Patch.Export(status_item.item.Id, status_item.data); // BIC
 									hoverTextDrawer.DrawText(status_item.GetName(), style);
 								}
 							}
