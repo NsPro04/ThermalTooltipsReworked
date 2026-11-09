@@ -862,7 +862,7 @@ namespace ThermalTooltipsReworked {
 
 				BuildingDef buildingDef = prefab?.GetComponent<Building>()?.Def;
 
-				PrimaryElement buildingPrimaryElement = prefab.GetComponent<PrimaryElement>();
+				PrimaryElement buildingPrimaryElement = prefab?.GetComponent<PrimaryElement>();
 
 				if (buildingDef == null || buildingPrimaryElement == null) break;
 
