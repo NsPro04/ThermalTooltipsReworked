@@ -291,29 +291,29 @@ namespace ThermalTooltipsReworked {
 					for (int idx = 0; idx <= sortedUnits.Count; ++idx) {
 						__currentPos.SetValue(hoverTextDrawer, new Vector2(__currentPosX + BICCompatibility.MaxTempWidth.Get() * idx, ((Vector2)__currentPos.GetValue(hoverTextDrawer)).y));
 
-						if (idx == sortedUnits.Count) {
+						if (idx == sortedUnits.Count) { // indent (dirty hack)
 							int icon_size = BICCompatibility.Options.CardSize.ShouldOverride ? -BICCompatibility.Options.CardSize.IconSizeChange : 0;
-							hoverTextDrawer.DrawIcon(icon_dash, icon_size); // indent (dirty hack)
+							hoverTextDrawer.DrawIcon(icon_dash, icon_size);
 							break;
 						}
 
 						TemperatureUnit unit = sortedUnits[idx];
 
 						hoverTextDrawer.DrawText(string.Format("{0}: {1}",
-							Utils.GetTemperatureUnitSuffix(unit), GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToPrecisionString()
+							Utils.GetTemperatureUnitSuffix(unit), GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToDecimal().ToStringIC()
 						), BodyStyle);
 					}
 				}
 
 				{ // thermal conductivity
-					float tc = element.thermalConductivity;
+					decimal tc = GameUtil.GetDisplayThermalConductivity(element.thermalConductivity).ToDecimal(format2: "0.#####");
 
 					if (objectBuilding != null) {
-						float building_tc = objectBuilding.Def.ThermalConductivity;
+						decimal building_tc = objectBuilding.Def.ThermalConductivity.ToDecimal(format2: "0.#####");
 
 						if (objectBuilding.GetComponent<Insulator>() != null) {
-							float tc_modifier = 1.53787e-05f; // (1/255)^2
-							int idk = (int)(building_tc * 255.0);
+							decimal tc_modifier = 1.53787e-05m; // (1/255)^2
+							int idk = (int)(building_tc * 255m);
 							tc *= idk * idk * tc_modifier;
 						} else {
 							tc *= building_tc;
@@ -323,11 +323,9 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
 					{
-						float final_tc = GameUtil.GetDisplayThermalConductivity(tc);
+						string tc_str = Math.Abs(tc) > 0.001m ? tc.ToStringIC() : tc.ToStringIC("0.00e+0");
 
-						string final_tc_str = Math.Abs(final_tc) > 0.001 ? final_tc.ToPrecisionString() : final_tc.ToString("0.00e+0", CultureInfo.InvariantCulture);
-
-						hoverTextDrawer.DrawText(string.Format("{0} (DTU/(m*s))/{1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, final_tc_str), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+						hoverTextDrawer.DrawText(string.Format("{0} (DTU/(m*s))/{1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, tc_str), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 					}
 				}
 
@@ -338,76 +336,22 @@ namespace ThermalTooltipsReworked {
 
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (DTU/g)/{1}", string.Format(UI.ELEMENTAL.SHC.NAME, GameUtil.GetDisplaySHC(shc).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (DTU/g)/{1}", string.Format(UI.ELEMENTAL.SHC.NAME, GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####").ToStringIC()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.')), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
-				{ // high temp transition
-					Element highPrimaryElement = element.highTempTransition;
-
-					if (highPrimaryElement != null) {
-						Element highSecondaryElement = ElementLoader.FindElementByHash(element.highTempTransitionOreID);
-
-						hoverTextDrawer.NewLine();
-						hoverTextDrawer.DrawIcon(icon_dash);
-						hoverTextDrawer.DrawIcon(state_temp_up, 22);
-						hoverTextDrawer.DrawText(Utils.GetTemperatures(element.highTemp + 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
-
-						{
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(highPrimaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-
-							hoverTextDrawer.DrawText(highPrimaryElement.name, BodyStyle);
-						}
-
-						if (highSecondaryElement != null) {
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(highSecondaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-							hoverTextDrawer.DrawText(highSecondaryElement.name, BodyStyle);
-						}
-					}
-				}
-
-				{ // low temp transition
-					Element lowPrimaryElement = element.lowTempTransition;
-
-					if (lowPrimaryElement != null) {
-						Element lowSecondaryElement = ElementLoader.FindElementByHash(element.lowTempTransitionOreID);
-
-						hoverTextDrawer.NewLine();
-						hoverTextDrawer.DrawIcon(icon_dash);
-						hoverTextDrawer.DrawIcon(state_temp_down, 22);
-						hoverTextDrawer.DrawText(Utils.GetTemperatures(element.lowTemp - 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
-
-						{
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowPrimaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-
-							hoverTextDrawer.DrawText(lowPrimaryElement.name, BodyStyle);
-						}
-
-						if (lowSecondaryElement != null) {
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowSecondaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-							hoverTextDrawer.DrawText(lowSecondaryElement.name, BodyStyle);
-						}
-					}
-				}
+				Utils.DrawTempTransition(element, hoverTextDrawer, icon_dash, state_temp_down, state_temp_up, BodyStyle);
 
 				hoverTextDrawer.EndShadowBar();
 			}
@@ -504,13 +448,10 @@ namespace ThermalTooltipsReworked {
 
 						if (!all_not_gaseous && !all_over_pressure) break;
 
-						string element1Name = element.tag.ProperName();
-
 						hoverTextDrawer.NewLine();
 						hoverTextDrawer.DrawIcon(icon_dash);
 
 						hoverTextDrawer.DrawText((all_not_gaseous ? MISC.STATUSITEMS.SUBLIMATIONBLOCKED.NAME : MISC.STATUSITEMS.SUBLIMATIONOVERPRESSURE.NAME)
-							.Replace("{Element}", element1Name)
 							.Replace("{SubElement}", element2Name), BodyStyle);
 					}
 				} while (false);
@@ -527,12 +468,12 @@ namespace ThermalTooltipsReworked {
 							hoverTextDrawer.NewLine();
 							hoverTextDrawer.DrawIcon(icon_dash);
 
-							hoverTextDrawer.DrawText(string.Format("{0} {1}: {2}",
+							hoverTextDrawer.DrawText(string.Format("{0} {1}: {2} {3}",
 								bubbleElement.name,
 								UI.TOOLS.GENERIC.BUBBLE_LABEL,
 								GameUtil.GetFormattedMass(bubble.totalMass),
 
-								Utils.GetTemperatures(element.highTemp, Utils.GetTemperatureUnits())
+								Utils.GetTemperatures(element.highTemp, Utils.GetTemperatureUnits(), format: "0.##")
 							), BodyStyle);
 						}
 
@@ -566,31 +507,29 @@ namespace ThermalTooltipsReworked {
 					for (int idx = 0; idx <= sortedUnits.Count; ++idx) {
 						__currentPos.SetValue(hoverTextDrawer, new Vector2(__currentPosX + BICCompatibility.MaxTempWidth.Get() * idx, ((Vector2)__currentPos.GetValue(hoverTextDrawer)).y));
 
-						if (idx == sortedUnits.Count) {
+						if (idx == sortedUnits.Count) { // indent (dirty hack)
 							int icon_size = BICCompatibility.Options.CardSize.ShouldOverride ? -BICCompatibility.Options.CardSize.IconSizeChange : 0;
-							hoverTextDrawer.DrawIcon(icon_dash, icon_size); // indent (dirty hack)
+							hoverTextDrawer.DrawIcon(icon_dash, icon_size);
 							break;
 						}
 
 						TemperatureUnit unit = sortedUnits[idx];
 
 						hoverTextDrawer.DrawText(string.Format("{0}: {1}",
-							Utils.GetTemperatureUnitSuffix(unit), GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToPrecisionString()
+							Utils.GetTemperatureUnitSuffix(unit), GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToDecimal().ToStringIC()
 						), BodyStyle);
 					}
 				}
 
 				{ // thermal conductivity
-					float tc = element.thermalConductivity;
+					decimal tc = GameUtil.GetDisplayThermalConductivity(element.thermalConductivity).ToDecimal(format2: "0.#####");
 
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
 					{
-						float final_tc = GameUtil.GetDisplayThermalConductivity(tc);
+						string tc_str = Math.Abs(tc) > 0.001m ? tc.ToStringIC() : tc.ToStringIC("0.00e+0");
 
-						string final_tc_str = Math.Abs(final_tc) > 0.001 ? final_tc.ToPrecisionString() : final_tc.ToString("0.00e+0", CultureInfo.InvariantCulture);
-
-						hoverTextDrawer.DrawText(string.Format("{0} (DTU/(m*s))/{1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, final_tc_str), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+						hoverTextDrawer.DrawText(string.Format("{0} (DTU/(m*s))/{1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, tc_str), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 					}
 				}
 
@@ -601,76 +540,22 @@ namespace ThermalTooltipsReworked {
 
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (DTU/g)/{1}", string.Format(UI.ELEMENTAL.SHC.NAME, GameUtil.GetDisplaySHC(shc).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (DTU/g)/{1}", string.Format(UI.ELEMENTAL.SHC.NAME, GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####").ToStringIC()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.')), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
-				{ // high temp transition
-					Element highPrimaryElement = element.highTempTransition;
-
-					if (highPrimaryElement != null) {
-						Element highSecondaryElement = ElementLoader.FindElementByHash(element.highTempTransitionOreID);
-
-						hoverTextDrawer.NewLine();
-						hoverTextDrawer.DrawIcon(icon_dash);
-						hoverTextDrawer.DrawIcon(state_temp_up, 22);
-						hoverTextDrawer.DrawText(Utils.GetTemperatures(element.highTemp + 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
-
-						{
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(highPrimaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-
-							hoverTextDrawer.DrawText(highPrimaryElement.name, BodyStyle);
-						}
-
-						if (highSecondaryElement != null) {
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(highSecondaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-							hoverTextDrawer.DrawText(highSecondaryElement.name, BodyStyle);
-						}
-					}
-				}
-
-				{ // low temp transition
-					Element lowPrimaryElement = element.lowTempTransition;
-
-					if (lowPrimaryElement != null) {
-						Element lowSecondaryElement = ElementLoader.FindElementByHash(element.lowTempTransitionOreID);
-
-						hoverTextDrawer.NewLine();
-						hoverTextDrawer.DrawIcon(icon_dash);
-						hoverTextDrawer.DrawIcon(state_temp_down, 22);
-						hoverTextDrawer.DrawText(Utils.GetTemperatures(element.lowTemp - 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
-
-						{
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowPrimaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-
-							hoverTextDrawer.DrawText(lowPrimaryElement.name, BodyStyle);
-						}
-
-						if (lowSecondaryElement != null) {
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowSecondaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-							hoverTextDrawer.DrawText(lowSecondaryElement.name, BodyStyle);
-						}
-					}
-				}
+				Utils.DrawTempTransition(element, hoverTextDrawer, icon_dash, state_temp_down, state_temp_up, BodyStyle);
 
 				hoverTextDrawer.EndShadowBar();
 			} while (false);
@@ -717,31 +602,29 @@ namespace ThermalTooltipsReworked {
 					for (int idx = 0; idx <= sortedUnits.Count; ++idx) {
 						__currentPos.SetValue(hoverTextDrawer, new Vector2(__currentPosX + BICCompatibility.MaxTempWidth.Get() * idx, ((Vector2)__currentPos.GetValue(hoverTextDrawer)).y));
 
-						if (idx == sortedUnits.Count) {
+						if (idx == sortedUnits.Count) { // indent (dirty hack)
 							int icon_size = BICCompatibility.Options.CardSize.ShouldOverride ? -BICCompatibility.Options.CardSize.IconSizeChange : 0;
-							hoverTextDrawer.DrawIcon(icon_dash, icon_size); // indent (dirty hack)
+							hoverTextDrawer.DrawIcon(icon_dash, icon_size);
 							break;
 						}
 
 						TemperatureUnit unit = sortedUnits[idx];
 
 						hoverTextDrawer.DrawText(string.Format("{0}: {1}",
-							Utils.GetTemperatureUnitSuffix(unit), GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToPrecisionString()
+							Utils.GetTemperatureUnitSuffix(unit), GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToDecimal().ToStringIC()
 						), BodyStyle);
 					}
 				}
 
 				{ // thermal conductivity
-					float tc = backwallElement.thermalConductivity;
+					decimal tc = GameUtil.GetDisplayThermalConductivity(backwallElement.thermalConductivity).ToDecimal(format2: "0.#####");
 
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
 					{
-						float final_tc = GameUtil.GetDisplayThermalConductivity(tc);
+						string tc_str = Math.Abs(tc) > 0.001m ? tc.ToStringIC() : tc.ToStringIC("0.00e+0");
 
-						string final_tc_str = Math.Abs(final_tc) > 0.001 ? final_tc.ToPrecisionString() : final_tc.ToString("0.00e+0", CultureInfo.InvariantCulture);
-
-						hoverTextDrawer.DrawText(string.Format("{0} (DTU/(m*s))/{1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, final_tc_str), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+						hoverTextDrawer.DrawText(string.Format("{0} (DTU/(m*s))/{1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, tc_str), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 					}
 				}
 
@@ -752,76 +635,22 @@ namespace ThermalTooltipsReworked {
 
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (DTU/g)/{1}", string.Format(UI.ELEMENTAL.SHC.NAME, GameUtil.GetDisplaySHC(shc).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (DTU/g)/{1}", string.Format(UI.ELEMENTAL.SHC.NAME, GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####").ToStringIC()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString()), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.')), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToPrecisionString())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
-				{ // high temp transition
-					Element highPrimaryElement = backwallElement.highTempTransition;
-
-					if (highPrimaryElement != null) {
-						Element highSecondaryElement = ElementLoader.FindElementByHash(backwallElement.highTempTransitionOreID);
-
-						hoverTextDrawer.NewLine();
-						hoverTextDrawer.DrawIcon(icon_dash);
-						hoverTextDrawer.DrawIcon(state_temp_up, 22);
-						hoverTextDrawer.DrawText(Utils.GetTemperatures(backwallElement.highTemp + 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
-
-						{
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(highPrimaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-
-							hoverTextDrawer.DrawText(highPrimaryElement.name, BodyStyle);
-						}
-
-						if (highSecondaryElement != null) {
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(highSecondaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-							hoverTextDrawer.DrawText(highSecondaryElement.name, BodyStyle);
-						}
-					}
-				}
-
-				{ // low temp transition
-					Element lowPrimaryElement = backwallElement.lowTempTransition;
-
-					if (lowPrimaryElement != null) {
-						Element lowSecondaryElement = ElementLoader.FindElementByHash(backwallElement.lowTempTransitionOreID);
-
-						hoverTextDrawer.NewLine();
-						hoverTextDrawer.DrawIcon(icon_dash);
-						hoverTextDrawer.DrawIcon(state_temp_down, 22);
-						hoverTextDrawer.DrawText(Utils.GetTemperatures(backwallElement.lowTemp - 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
-
-						{
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowPrimaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-
-							hoverTextDrawer.DrawText(lowPrimaryElement.name, BodyStyle);
-						}
-
-						if (lowSecondaryElement != null) {
-							Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowSecondaryElement);
-
-							hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
-							hoverTextDrawer.DrawText(lowSecondaryElement.name, BodyStyle);
-						}
-					}
-				}
+				Utils.DrawTempTransition(backwallElement, hoverTextDrawer, icon_dash, state_temp_down, state_temp_up, BodyStyle);
 
 				hoverTextDrawer.EndShadowBar();
 			}
@@ -905,14 +734,14 @@ namespace ThermalTooltipsReworked {
 				}
 
 				{ // thermal conductivity
-					float tc = selectedElement.thermalConductivity;
+					decimal tc = GameUtil.GetDisplayThermalConductivity(selectedElement.thermalConductivity).ToDecimal(format2: "0.#####");
 
 					{
-						float building_tc = buildingDef.ThermalConductivity;
+						decimal building_tc = buildingDef.ThermalConductivity.ToDecimal(format2: "0.#####");
 
 						if (prefab.GetComponent<Insulator>() != null) {
-							float tc_modifier = 1.53787e-05f; // (1/255)^2
-							int idk = (int)(building_tc * 255.0);
+							decimal tc_modifier = 1.53787e-05m; // (1/255)^2
+							int idk = (int)(building_tc * 255m);
 							tc *= idk * idk * tc_modifier;
 						} else {
 							tc *= building_tc;
@@ -922,17 +751,15 @@ namespace ThermalTooltipsReworked {
 					Descriptor row = default;
 
 					{
-						float final_tc = GameUtil.GetDisplayThermalConductivity(tc);
-
-						string final_tc_str = Math.Abs(final_tc) > 0.001 ? final_tc.ToPrecisionString() : final_tc.ToString("0.00e+0", CultureInfo.InvariantCulture);
+						string tc_str = Math.Abs(tc) > 0.001m ? tc.ToStringIC() : tc.ToStringIC("0.00e+0");
 
 						string temperatureUnitSuffix = Utils.GetTemperatureUnitSuffix();
 
-						string tc_formatted = string.Format("{0} (DTU/(m*s))/{1}", final_tc_str, temperatureUnitSuffix);
-
 						row.SetupDescriptor(
-							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, "").Trim().Replace(":", ""), final_tc_str),
-							UI.ELEMENTAL.THERMALCONDUCTIVITY.TOOLTIP.Replace("{THERMAL_CONDUCTIVITY}", tc_formatted).Replace("{TEMPERATURE_UNIT}", temperatureUnitSuffix)
+							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.THERMALCONDUCTIVITY.NAME, "").TrimEnd().TrimEnd(':'), tc_str),
+							UI.ELEMENTAL.THERMALCONDUCTIVITY.TOOLTIP
+								.Replace("{THERMAL_CONDUCTIVITY}", string.Format("{0} (DTU/(m*s))/{1}", tc_str, temperatureUnitSuffix))
+								.Replace("{TEMPERATURE_UNIT}", temperatureUnitSuffix)
 						);
 					}
 
@@ -949,15 +776,15 @@ namespace ThermalTooltipsReworked {
 					Descriptor row = default;
 
 					{
-						string shc_str = GameUtil.GetDisplaySHC(shc).ToPrecisionString();
+						string shc_str = GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####").ToStringIC();
 
 						string temperatureUnitSuffix = Utils.GetTemperatureUnitSuffix();
 
-						string shc_formatted = string.Format("{0} (DTU/g)/{1}", shc_str, temperatureUnitSuffix);
-
 						row.SetupDescriptor(
-							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.SHC.NAME, "").Trim().Replace(":", ""), shc_str),
-							UI.ELEMENTAL.SHC.TOOLTIP.Replace("{SPECIFIC_HEAT_CAPACITY}", shc_formatted).Replace("{TEMPERATURE_UNIT}", temperatureUnitSuffix)
+							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.SHC.NAME, "").TrimEnd().TrimEnd(':'), shc_str),
+							UI.ELEMENTAL.SHC.TOOLTIP
+								.Replace("{SPECIFIC_HEAT_CAPACITY}", string.Format("{0} (DTU/g)/{1}", shc_str, temperatureUnitSuffix))
+								.Replace("{TEMPERATURE_UNIT}", temperatureUnitSuffix)
 						);
 					}
 
@@ -970,15 +797,13 @@ namespace ThermalTooltipsReworked {
 					Descriptor row = default;
 
 					{
-						string tm_str = (mass * GameUtil.GetDisplaySHC(shc)).ToPrecisionString();
+						string tm_str = (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.');
 
 						string temperatureUnitSuffix = Utils.GetTemperatureUnitSuffix();
 
-						string tm_formatted = string.Format("{0} (kDTU)/{1}", tm_str, temperatureUnitSuffix);
-
 						row.SetupDescriptor(
-							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(TTRS.UI.THERMAL_MASS, "").Trim().Replace(":", ""), tm_str),
-							string.Format("{0}", tm_formatted)
+							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(TTRS.UI.THERMAL_MASS, "").TrimEnd().TrimEnd(':'), tm_str),
+							string.Format("{0}", string.Format("{0} (kDTU)/{1}", tm_str, temperatureUnitSuffix))
 						);
 					}
 
@@ -987,27 +812,36 @@ namespace ThermalTooltipsReworked {
 					descriptors.Add(row);
 				}
 
-				do { // melting point
+				{
 					Element highPrimaryElement = selectedElement.highTempTransition;
 
-					if (highPrimaryElement == null) break;
+					Debug.Log(highPrimaryElement.name);
 
-					Descriptor row = default;
+					if (highPrimaryElement != null) {
+						Element highSecondaryElement = ElementLoader.FindElementByHash(selectedElement.highTempTransitionOreID);
 
-					{
-						string mp_formatted1 = Utils.GetTemperatures(selectedElement.highTemp + 3f, Utils.GetTemperatureUnits(current: true, kelvin: false), brackets: false, format: "0.##");
-						string mp_formatted2 = Utils.GetTemperatures(selectedElement.highTemp + 3f, Utils.GetTemperatureUnits(all: true), format: "0.##");
+						Descriptor row = default;
 
-						row.SetupDescriptor(
-							string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.MELTINGPOINT.NAME, "").Trim().Replace(":", ""), mp_formatted1),
-							string.Format(UI.ELEMENTAL.MELTINGPOINT.TOOLTIP, mp_formatted2)
-						);
+						{
+							string mp_formatted1 = Utils.GetTemperatures(selectedElement.highTemp + 3f, Utils.GetTemperatureUnits(current: true, kelvin: false), brackets: false, format: "0.##");
+							string mp_formatted2 = Utils.GetTemperatures(selectedElement.highTemp + 3f, Utils.GetTemperatureUnits(all: true), format: "0.##");
+
+							row.SetupDescriptor(
+								string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.MELTINGPOINT.NAME, "").TrimEnd().TrimEnd(':'), mp_formatted1),
+								string.Format("{0}\n{1}",
+									string.Format(UI.ELEMENTAL.MELTINGPOINT.TOOLTIP, mp_formatted2),
+									highSecondaryElement != null ?
+										string.Format("{0} + {1}", highPrimaryElement.name, highSecondaryElement.name) :
+										string.Format("{0}",       highPrimaryElement.name)
+								)
+							);
+						}
+
+						row.IncreaseIndent();
+
+						descriptors.Add(row);
 					}
-
-					row.IncreaseIndent();
-
-					descriptors.Add(row);
-				} while (false);
+				}
 			} while (false);
 
 			__instance.MaterialEffectsPane.SetDescriptors(descriptors);
@@ -1068,9 +902,9 @@ namespace ThermalTooltipsReworked {
 				TemperatureUnit unit = units[idx];
 
 				sb.Append(string.Format("{0} {1}",
-					(format != null && unit != TemperatureUnit.Kelvin) ?
-						GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToPrecisionString(format) :
-						GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToPrecisionString(),
+					(format != null) ?
+						GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToDecimal(format2: format).ToStringIC() :
+						GameUtil.GetTemperatureConvertedFromKelvin(temperature, unit).ToDecimal().ToStringIC(),
 					GetTemperatureUnitSuffix(unit)
 				));
 			}
@@ -1079,18 +913,90 @@ namespace ThermalTooltipsReworked {
 
 			return sb.ToString();
 		}
+
+		public static void DrawTempTransition(Element element, HoverTextDrawer hoverTextDrawer, Sprite icon_dash, Sprite state_temp_up, Sprite state_temp_down, TextStyleSetting BodyStyle) {
+			{ // high temp transition
+				Element highPrimaryElement = element.highTempTransition;
+
+				if (highPrimaryElement != null) {
+					Element highSecondaryElement = ElementLoader.FindElementByHash(element.highTempTransitionOreID);
+
+					hoverTextDrawer.NewLine();
+					hoverTextDrawer.DrawIcon(icon_dash);
+					hoverTextDrawer.DrawIcon(state_temp_up, 22);
+					hoverTextDrawer.DrawText(Utils.GetTemperatures(element.highTemp + 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
+
+					{
+						Tuple<Sprite, Color> UISprite = Def.GetUISprite(highPrimaryElement);
+
+						hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
+
+						hoverTextDrawer.DrawText(highPrimaryElement.name, BodyStyle);
+					}
+
+					if (highSecondaryElement != null) {
+						Tuple<Sprite, Color> UISprite = Def.GetUISprite(highSecondaryElement);
+
+						hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
+						hoverTextDrawer.DrawText(highSecondaryElement.name, BodyStyle);
+					}
+				}
+			}
+
+			{ // low temp transition
+				Element lowPrimaryElement = element.lowTempTransition;
+
+				if (lowPrimaryElement != null) {
+					Element lowSecondaryElement = ElementLoader.FindElementByHash(element.lowTempTransitionOreID);
+
+					hoverTextDrawer.NewLine();
+					hoverTextDrawer.DrawIcon(icon_dash);
+					hoverTextDrawer.DrawIcon(state_temp_down, 22);
+					hoverTextDrawer.DrawText(Utils.GetTemperatures(element.lowTemp - 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
+
+					{
+						Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowPrimaryElement);
+
+						hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
+
+						hoverTextDrawer.DrawText(lowPrimaryElement.name, BodyStyle);
+					}
+
+					if (lowSecondaryElement != null) {
+						Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowSecondaryElement);
+
+						hoverTextDrawer.DrawIcon(UISprite.first, UISprite.second, 22);
+						hoverTextDrawer.DrawText(lowSecondaryElement.name, BodyStyle);
+					}
+				}
+			}
+		}
 	}
 }
 
 namespace ThermalTooltipsReworked {
 	internal static class FloatExtensions {
-		public static string ToPrecisionString(this float value, string format = "0.#########", float max = 1e+28f) => (
-			((decimal)(
-				Math.Min(Math.Abs(value), max) *
-				Math.Sign(value) *
-				Convert.ToInt32(Math.Abs(value) >= 0.000000001f) // 0.000000001f // 0.000000000000000001f
-			)).ToString(format, CultureInfo.InvariantCulture)    // 0.#########  // 0.##################
-		);
+		public static decimal ToDecimal(this float value, string format1 = "G9", string format2 = "0.#########") {
+			if (!float.IsNormal(value))
+				return 0m;
+
+			float value_abs = Math.Abs(value);
+			float __value = Math.Min(value_abs, 1e+28f) * Math.Sign(value) * Convert.ToInt32(value_abs >= 0.000000001f);
+
+			value_abs = Math.Abs(__value);
+
+			return decimal.Parse(
+				decimal.Parse(
+					__value.ToString(format1, CultureInfo.InvariantCulture),
+
+					NumberStyles.Float,
+					CultureInfo.InvariantCulture
+				).ToString(format2, CultureInfo.InvariantCulture),
+
+				NumberStyles.Float,
+				CultureInfo.InvariantCulture
+			);
+		}
 	}
 
 	internal static class DecimalExtensions {
