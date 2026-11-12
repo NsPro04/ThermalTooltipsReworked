@@ -914,7 +914,9 @@ namespace ThermalTooltipsReworked {
 			return sb.ToString();
 		}
 
-		public static void DrawTempTransition(Element element, HoverTextDrawer hoverTextDrawer, Sprite icon_dash, Sprite state_temp_up, Sprite state_temp_down, TextStyleSetting BodyStyle) {
+		public static void DrawTempTransition(Element element, HoverTextDrawer hoverTextDrawer, Sprite icon_dash, Sprite state_temp_up, Sprite state_temp_down, TextStyleSetting BodyStyle, bool useTemperatureOffset = true) {
+			float temperatureOffset = useTemperatureOffset ? 3f : 0f;
+
 			{ // high temp transition
 				Element highPrimaryElement = element.highTempTransition;
 
@@ -924,7 +926,7 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
 					hoverTextDrawer.DrawIcon(state_temp_up, 22);
-					hoverTextDrawer.DrawText(Utils.GetTemperatures(element.highTemp + 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
+					hoverTextDrawer.DrawText(Utils.GetTemperatures(element.highTemp + temperatureOffset, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
 
 					{
 						Tuple<Sprite, Color> UISprite = Def.GetUISprite(highPrimaryElement);
@@ -952,7 +954,7 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
 					hoverTextDrawer.DrawIcon(state_temp_down, 22);
-					hoverTextDrawer.DrawText(Utils.GetTemperatures(element.lowTemp - 3f, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
+					hoverTextDrawer.DrawText(Utils.GetTemperatures(element.lowTemp - temperatureOffset, Utils.GetTemperatureUnits(), format: "0.##"), BodyStyle);
 
 					{
 						Tuple<Sprite, Color> UISprite = Def.GetUISprite(lowPrimaryElement);
