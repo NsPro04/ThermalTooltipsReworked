@@ -351,7 +351,22 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
-				Utils.DrawTempTransition(element, hoverTextDrawer, icon_dash, state_temp_up, state_temp_down, BodyStyle);
+
+				{
+					bool useTemperatureOffset = true;
+
+					SimCellOccupier objectSimCellOccupier = hoverObject.GetComponent<SimCellOccupier>();
+
+					if (objectBuilding == null) {
+						useTemperatureOffset = true;
+					} else if (objectSimCellOccupier == null) {
+						useTemperatureOffset = false;
+					} else if (objectBuilding.Def.UseStructureTemperature && objectSimCellOccupier.doReplaceElement) {
+						useTemperatureOffset = false;
+					}
+
+					Utils.DrawTempTransition(element, hoverTextDrawer, icon_dash, state_temp_up, state_temp_down, BodyStyle, useTemperatureOffset);
+				}
 
 				hoverTextDrawer.EndShadowBar();
 			}
