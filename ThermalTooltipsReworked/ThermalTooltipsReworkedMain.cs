@@ -828,6 +828,16 @@ namespace ThermalTooltipsReworked {
 				}
 
 				{
+					bool useTemperatureOffset = true;
+
+					SimCellOccupier objectSimCellOccupier = prefab.GetComponent<SimCellOccupier>();
+
+					if (objectSimCellOccupier == null) {
+						useTemperatureOffset = false;
+					} else if (buildingDef.UseStructureTemperature && objectSimCellOccupier.doReplaceElement) {
+						useTemperatureOffset = false;
+					}
+
 					Element highPrimaryElement = selectedElement.highTempTransition;
 
 					Debug.Log(highPrimaryElement.name);
@@ -838,8 +848,8 @@ namespace ThermalTooltipsReworked {
 						Descriptor row = default;
 
 						{
-							string mp_formatted1 = Utils.GetTemperatures(selectedElement.highTemp + 3f, Utils.GetTemperatureUnits(current: true, kelvin: false), brackets: false, format: "0.##");
-							string mp_formatted2 = Utils.GetTemperatures(selectedElement.highTemp + 3f, Utils.GetTemperatureUnits(all: true), format: "0.##");
+							string mp_formatted1 = Utils.GetTemperatures(selectedElement.highTemp + (useTemperatureOffset ? 3f : 0f), Utils.GetTemperatureUnits(current: true, kelvin: false), brackets: false, format: "0.##");
+							string mp_formatted2 = Utils.GetTemperatures(selectedElement.highTemp + (useTemperatureOffset ? 3f : 0f), Utils.GetTemperatureUnits(all: true), format: "0.##");
 
 							row.SetupDescriptor(
 								string.Format("<link=\"HEAT\">{0}</link>: {1}", string.Format(UI.ELEMENTAL.MELTINGPOINT.NAME, "").TrimEnd().TrimEnd(':'), mp_formatted1),
