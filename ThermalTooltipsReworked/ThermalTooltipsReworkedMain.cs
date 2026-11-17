@@ -1279,3 +1279,4 @@ namespace ThermalTooltipsReworked {
 
 // TODO: Display buried objects?
 // TODO: Display pipes and rails content? Buildings?
+// TODO: Options
