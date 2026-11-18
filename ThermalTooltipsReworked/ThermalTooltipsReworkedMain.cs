@@ -840,8 +840,6 @@ namespace ThermalTooltipsReworked {
 
 					Element highPrimaryElement = selectedElement.highTempTransition;
 
-					Debug.Log(highPrimaryElement.name);
-
 					if (highPrimaryElement != null) {
 						Element highSecondaryElement = ElementLoader.FindElementByHash(selectedElement.highTempTransitionOreID);
 
