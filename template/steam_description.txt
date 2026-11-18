@@ -14,7 +14,6 @@ Originally, I made this mod just for myself, but it turned out pretty well, so I
 [*]Heat Energy, like temperature, is displayed without abbreviations[/*]
 [*]Phase-change temperatures are displayed in two units simultaneously (in the selected units and in kelvins)[/*]
 [*]The temperature of the contents of the bubbles is displayed[/*]
-[*]The content temperature of the bubbles is displayed[/*]
 [*]In addition, the material selection section has been formatted[/*]
 [/list](I may have forgotten something)
 
