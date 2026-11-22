@@ -54,7 +54,6 @@ namespace ThermalTooltipsReworked {
 				var __SEPrefix = AccessTools.Method(typeof(ThermalTooltipsReworkedMain), "SetEffectsPrefix");
 
 				harmony.Patch(__SE, new HarmonyMethod(__SEPrefix));
-				if (false) SetEffectsPrefix(null, null);
 			}
 		}
 
@@ -351,6 +350,18 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
+				{ // radiation
+					float? blocking = null;
+
+					SimCellOccupier objectSimCellOccupier = hoverObject.GetComponent<SimCellOccupier>();
+
+					// only buildings that replace the cell element (tiles, doors, etc.) actually block radiation
+					if (objectSimCellOccupier != null && objectSimCellOccupier.doReplaceElement && Grid.IsSolidCell(cell)) {
+						blocking = GameUtil.GetRadiationAbsorptionPercentage(cell);
+					}
+
+					Utils.DrawRadiation(element, blocking, hoverTextDrawer, icon_dash, BodyStyle);
+				}
 
 				{
 					bool useTemperatureOffset = true;
@@ -570,6 +581,10 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
+				if (!element.IsVacuum) { // radiation
+					Utils.DrawRadiation(element, GameUtil.GetRadiationAbsorptionPercentage(cell), hoverTextDrawer, icon_dash, BodyStyle);
+				}
+
 				Utils.DrawTempTransition(element, hoverTextDrawer, icon_dash, state_temp_up, state_temp_down, BodyStyle);
 
 				hoverTextDrawer.EndShadowBar();
@@ -665,6 +680,8 @@ namespace ThermalTooltipsReworked {
 					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
 				}
 
+				Utils.DrawRadiation(backwallElement, null, hoverTextDrawer, icon_dash, BodyStyle);
+
 				Utils.DrawTempTransition(backwallElement, hoverTextDrawer, icon_dash, state_temp_up, state_temp_down, BodyStyle);
 
 				hoverTextDrawer.EndShadowBar();
@@ -677,7 +694,7 @@ namespace ThermalTooltipsReworked {
 			return false;
 		}
 
-		private static bool SetEffectsPrefix(MaterialSelector __instance, Tag element) {
+		private static bool SetEffectsPrefix(MaterialSelector __instance, Tag element, ref bool __result) {
 			if (__instance.MaterialDescriptionPane == null) return true;
 
 			Element selectedElement = ElementLoader.GetElement(element);
@@ -778,7 +795,7 @@ namespace ThermalTooltipsReworked {
 						);
 					}
 
-					row.IncreaseIndent();
+					row.indent = 1;
 
 					descriptors.Add(row);
 				}
@@ -803,7 +820,7 @@ namespace ThermalTooltipsReworked {
 						);
 					}
 
-					row.IncreaseIndent();
+					row.indent = 1;
 
 					descriptors.Add(row);
 				}
@@ -822,7 +839,32 @@ namespace ThermalTooltipsReworked {
 						);
 					}
 
-					row.IncreaseIndent();
+					row.indent = 1;
+
+					descriptors.Add(row);
+				}
+
+				if (DlcManager.FeatureRadiationEnabled()) { // radiation
+					float? blocking = null;
+
+					SimCellOccupier objectSimCellOccupier = prefab.GetComponent<SimCellOccupier>();
+
+					// only buildings that replace the cell element (tiles, doors, etc.) actually block radiation
+					if (objectSimCellOccupier != null && objectSimCellOccupier.doReplaceElement) {
+						blocking = GameUtil.GetRadiationAbsorptionPercentage(selectedElement, buildingPrimaryElement.Mass, buildingDef.IsFoundation); // the game sets the ConstructedTile cell flag only for foundations
+					}
+
+					Descriptor row = default;
+
+					row.SetupDescriptor(
+						string.Format("<link=\"RADIATION\">{0}</link>: {1}", string.Format(UI.DETAILTABS.DETAILS.RADIATIONABSORPTIONFACTOR.NAME, "").TrimEnd().TrimEnd(':'), Utils.GetRadiationString(selectedElement, blocking)),
+						string.Format("{0}\n{1}",
+							string.Format(UI.DETAILTABS.DETAILS.RADIATIONABSORPTIONFACTOR.NAME, GameUtil.GetFormattedPercent((blocking ?? 0f) * 100f)),
+							string.Format(TTRS.UI.RADIATION_ABSORPTION_FACTOR, GameUtil.GetFormattedPercent(selectedElement.radiationAbsorptionFactor * 100f))
+						)
+					);
+
+					row.indent = 1;
 
 					descriptors.Add(row);
 				}
@@ -860,7 +902,7 @@ namespace ThermalTooltipsReworked {
 							);
 						}
 
-						row.IncreaseIndent();
+						row.indent = 1;
 
 						descriptors.Add(row);
 					}
@@ -868,6 +910,8 @@ namespace ThermalTooltipsReworked {
 			} while (false);
 
 			__instance.MaterialEffectsPane.SetDescriptors(descriptors);
+
+			__result = true;
 
 			return false;
 		}
@@ -936,6 +980,23 @@ namespace ThermalTooltipsReworked {
 
 			return sb.ToString();
 		}
+
+		// blocking: share of radiation (0..1) actually absorbed by the cell, null if the object does not block radiation
+		public static void DrawRadiation(Element element, float? blocking, HoverTextDrawer hoverTextDrawer, Sprite icon_dash, TextStyleSetting BodyStyle) {
+			if (element == null || !DlcManager.FeatureRadiationEnabled()) return;
+
+			hoverTextDrawer.NewLine();
+			hoverTextDrawer.DrawIcon(icon_dash);
+			hoverTextDrawer.DrawText(string.Format(UI.DETAILTABS.DETAILS.RADIATIONABSORPTIONFACTOR.NAME, GetRadiationString(element, blocking)), BodyStyle);
+		}
+
+		// "<actual blocking> (<absorption factor of the material>)"
+		public static string GetRadiationString(Element element, float? blocking) => (
+			string.Format("{0} ({1})",
+				GameUtil.GetFormattedPercent((blocking ?? 0f) * 100f),
+				GameUtil.GetFormattedPercent(element.radiationAbsorptionFactor * 100f)
+			)
+		);
 
 		public static void DrawTempTransition(Element element, HoverTextDrawer hoverTextDrawer, Sprite icon_dash, Sprite state_temp_up, Sprite state_temp_down, TextStyleSetting BodyStyle, bool useTemperatureOffset = true) {
 			float temperatureOffset = useTemperatureOffset ? 3f : 0f;
@@ -1080,6 +1141,7 @@ namespace ThermalTooltipsReworked {
 		public static class UI {
 			public static LocString THERMAL_MASS = "Thermal Mass: {0}";
 			public static LocString HEAT_ENERGY = "Heat Energy: {0}";
+			public static LocString RADIATION_ABSORPTION_FACTOR = "Radiation Absorption Factor: {0}";
 			public static LocString ADVANCED_PROPERTIES = "<b>Advanced Properties:</b>";
 		}
 	}

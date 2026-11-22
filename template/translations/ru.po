@@ -24,3 +24,8 @@ msgstr "Тепловая энергия: {0}"
 msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.ADVANCED_PROPERTIES"
 msgid "<b>Advanced Properties:</b>"
 msgstr "<b>Дополнительные свойства:</b>"
+
+#. ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.RADIATION_ABSORPTION_FACTOR
+msgctxt "ThermalTooltipsReworked.ThermalTooltipsReworkedStrings.UI.RADIATION_ABSORPTION_FACTOR"
+msgid "Radiation Absorption Factor: {0}"
+msgstr "Коэффициент поглощения радиации: {0}"
