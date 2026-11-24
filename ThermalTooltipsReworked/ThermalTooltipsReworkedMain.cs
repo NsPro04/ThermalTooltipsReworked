@@ -342,7 +342,7 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.')), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
@@ -561,7 +561,7 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.')), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
@@ -656,7 +656,7 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.')), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
@@ -814,7 +814,7 @@ namespace ThermalTooltipsReworked {
 					Descriptor row = default;
 
 					{
-						string tm_str = (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC().TrimEnd('0').TrimEnd('.');
+						string tm_str = (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############");
 
 						string temperatureUnitSuffix = Utils.GetTemperatureUnitSuffix();
 
