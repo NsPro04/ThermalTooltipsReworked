@@ -827,7 +827,7 @@ namespace ThermalTooltipsReworked {
 					descriptors.Add(row);
 				}
 
-				{
+				{ // melting point
 					bool useTemperatureOffset = true;
 
 					SimCellOccupier objectSimCellOccupier = prefab.GetComponent<SimCellOccupier>();
