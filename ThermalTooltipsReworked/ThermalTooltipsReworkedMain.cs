@@ -54,7 +54,7 @@ namespace ThermalTooltipsReworked {
 				var __SEPrefix = AccessTools.Method(typeof(ThermalTooltipsReworkedMain), "SetEffectsPrefix");
 
 				harmony.Patch(__SE, new HarmonyMethod(__SEPrefix));
-				if (false) SetEffectsPrefix(null, null);
+				if (false) _ = nameof(SetEffectsPrefix);
 			}
 		}
 
@@ -677,7 +677,7 @@ namespace ThermalTooltipsReworked {
 			return false;
 		}
 
-		private static bool SetEffectsPrefix(MaterialSelector __instance, Tag element) {
+		private static bool SetEffectsPrefix(MaterialSelector __instance, ref bool __result, Tag element) {
 			if (__instance.MaterialDescriptionPane == null) return true;
 
 			Element selectedElement = ElementLoader.GetElement(element);
@@ -685,8 +685,10 @@ namespace ThermalTooltipsReworked {
 			if (selectedElement == null) return true;
 
 			__instance.MaterialEffectsPane.gameObject.SetActive(value: true);
+			__result = true;
 
-			List<Descriptor> descriptors = GameUtil.GetMaterialDescriptors(element);
+			List<Descriptor> descriptors = new List<Descriptor>();
+			GameUtil.CollectMaterialDescriptors(element, descriptors);
 
 			do {
 				if (descriptors.Count == 0) break;
