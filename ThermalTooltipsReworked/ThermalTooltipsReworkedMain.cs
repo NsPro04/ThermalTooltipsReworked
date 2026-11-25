@@ -342,15 +342,14 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal(format2: "0.#######") * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.###########")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass.ToDecimal() * shc.ToDecimal(format2: "0.####") * temperature.ToDecimal()).ToStringIC("0.######################"))), BodyStyle);
 				}
-
 
 				{
 					bool useTemperatureOffset = true;
@@ -561,13 +560,13 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal(format2: "0.#######") * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.###########")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass.ToDecimal() * shc.ToDecimal(format2: "0.####") * temperature.ToDecimal()).ToStringIC("0.######################"))), BodyStyle);
 				}
 
 				Utils.DrawTempTransition(element, hoverTextDrawer, icon_dash, state_temp_up, state_temp_down, BodyStyle);
@@ -656,13 +655,13 @@ namespace ThermalTooltipsReworked {
 				{ // thermal mass
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} (kDTU)/{1}", string.Format(TTRS.UI.THERMAL_MASS, (mass.ToDecimal(format2: "0.#######") * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.###########")), Utils.GetTemperatureUnitSuffix()), BodyStyle);
 				}
 
 				{ // heat energy
 					hoverTextDrawer.NewLine();
 					hoverTextDrawer.DrawIcon(icon_dash);
-					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass * shc * temperature).ToDecimal().ToStringIC())), BodyStyle);
+					hoverTextDrawer.DrawText(string.Format("{0} kDTU", string.Format(TTRS.UI.HEAT_ENERGY, (mass.ToDecimal() * shc.ToDecimal(format2: "0.####") * temperature.ToDecimal()).ToStringIC("0.######################"))), BodyStyle);
 				}
 
 				Utils.DrawTempTransition(backwallElement, hoverTextDrawer, icon_dash, state_temp_up, state_temp_down, BodyStyle);
@@ -814,7 +813,7 @@ namespace ThermalTooltipsReworked {
 					Descriptor row = default;
 
 					{
-						string tm_str = (mass.ToDecimal() * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.#############");
+						string tm_str = (mass.ToDecimal(format2: "0.#######") * GameUtil.GetDisplaySHC(shc).ToDecimal(format2: "0.####")).ToStringIC("0.###########");
 
 						string temperatureUnitSuffix = Utils.GetTemperatureUnitSuffix();
 
