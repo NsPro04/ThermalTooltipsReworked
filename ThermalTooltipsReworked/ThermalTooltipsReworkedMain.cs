@@ -71,6 +71,14 @@ namespace ThermalTooltipsReworked {
 					mod.staticID == "BetterInfoCardsPlus"         || /*3817699615*/
 					mod.staticID == "CanisMinor.ThermalInfoCards" || /*3797325396*/
 					mod.staticID == "AlwaysShowItemInfo"          || /*3778431283*/
+					mod.staticID == "BetterCellInfoCards"         || /*3843629859*/
+					mod.staticID == "MaterialSelectionPropertiesU60Fix" || /*3844590217*/
+					mod.staticID == "InformationCardPlus"         || /*3844652355*/
+					mod.staticID == "RexPack.InfoCards"           || /*3843965397*/
+					mod.staticID == "Joello.ReadableInfoCards"    || /*3844726984*/
+					mod.staticID == "InfoCardsNext"               || /*3844927883*/
+					mod.label.id == "3843914778"                  || /*3843914778*/
+					mod.label.id == "3845614617"                  || /*3845614617*/
 					false)
 				{
 					restartRequested = true;
